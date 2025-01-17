@@ -12,6 +12,10 @@ type TestCase struct {
 
 var testCases = []TestCase{
 	{
+		In:       "seven hundred ninety-nine",
+		Expected: 799,
+	},
+	{
 		In:       "zero",
 		Expected: 0,
 	},

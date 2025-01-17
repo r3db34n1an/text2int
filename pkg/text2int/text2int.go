@@ -53,7 +53,13 @@ func (what *Text2Int) Convert(text string) (int, error) {
 
 // match returns the value of the word, the remaining text, and if the word was a scale, if a word was found
 func (what *Text2Int) match(text string) (int, string, bool, bool) {
-	for word, value := range what.singles {
+	for word, value := range what.scales {
+		if strings.HasPrefix(text, word) {
+			return value, text[len(word):], true, true
+		}
+	}
+
+	for word, value := range what.tens {
 		if strings.HasPrefix(text, word) {
 			return value, text[len(word):], false, true
 		}
@@ -65,15 +71,9 @@ func (what *Text2Int) match(text string) (int, string, bool, bool) {
 		}
 	}
 
-	for word, value := range what.tens {
+	for word, value := range what.singles {
 		if strings.HasPrefix(text, word) {
 			return value, text[len(word):], false, true
-		}
-	}
-
-	for word, value := range what.scales {
-		if strings.HasPrefix(text, word) {
-			return value, text[len(word):], true, true
 		}
 	}
 
