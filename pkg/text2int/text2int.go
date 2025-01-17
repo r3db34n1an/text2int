@@ -15,7 +15,12 @@ type Text2Int struct {
 
 func (what *Text2Int) Convert(text string) (int, error) {
 	what.init()
-	text = what.sanitize(text)
+	sanitized, sanitizeError := what.sanitize(text)
+	if sanitizeError != nil {
+		return 0, fmt.Errorf("failed to sanitize text: %v", sanitizeError)
+	}
+
+	text = sanitized
 	if len(text) == 0 {
 		return 0, fmt.Errorf("no text to convert")
 	}
@@ -75,9 +80,13 @@ func (what *Text2Int) match(text string) (int, string, bool, bool) {
 	return 0, text, false, false
 }
 
-func (what *Text2Int) sanitize(text string) string {
-	regex := regexp.MustCompile(`[^a-z]+`)
-	return regex.ReplaceAllString(strings.ToLower(text), "")
+func (what *Text2Int) sanitize(text string) (string, error) {
+	regex, regexError := regexp.Compile(`[^a-z]+`)
+	if regexError != nil {
+		return "", fmt.Errorf("failed to compile regex: %v", regexError)
+	}
+
+	return regex.ReplaceAllString(strings.ToLower(text), ""), nil
 }
 
 func (what *Text2Int) init() {
